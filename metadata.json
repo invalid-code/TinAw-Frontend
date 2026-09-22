@@ -2,5 +2,5 @@
   "name": "TinAw Water Quality Network",
   "description": "Civic environmental water-quality monitoring and recirculation network for community transparency in Cebu.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }
