@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { STATIONS } from './data/stations';
+import { loadStations } from './data/stationRepository';
 import { ActiveTab, WaterStation } from './types';
 import { Header } from './components/Header';
 import { HomeScreen } from './components/HomeScreen';
@@ -22,9 +23,24 @@ export default function App() {
   const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
   const [isPortalModalOpen, setIsPortalModalOpen] = useState<boolean>(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState<boolean>(false);
+  const [stations, setStations] = useState<WaterStation[]>(STATIONS);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    loadStations().then((result) => {
+      if (!cancelled) {
+        setStations(result.stations);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const selectedStation: WaterStation =
-    STATIONS.find((s) => s.id === selectedStationId) || STATIONS[0];
+    stations.find((s) => s.id === selectedStationId) || stations[0];
 
   const handleNavigateHome = () => {
     setCurrentView('explore');
@@ -57,7 +73,7 @@ export default function App() {
       <main className="flex-1">
         {currentView === 'explore' && (
           <HomeScreen
-            stations={STATIONS}
+            stations={stations}
             selectedStationId={selectedStationId}
             onSelectStation={(id) => setSelectedStationId(id)}
             onViewStation={handleViewStation}
@@ -94,7 +110,7 @@ export default function App() {
       <LocationModal
         isOpen={isLocationModalOpen}
         onClose={() => setIsLocationModalOpen(false)}
-        stations={STATIONS}
+        stations={stations}
         selectedStationId={selectedStationId}
         onSelectStation={(id) => setSelectedStationId(id)}
         onViewStation={handleViewStation}
